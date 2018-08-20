@@ -1,0 +1,12 @@
+{
+  "name": "common-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "glob": "^7.1.2",
+    "koa": "^2.5.2",
+    "koa-router": "^7.4.0",
+    "mongoose": "^5.2.9"
+  }
+}
