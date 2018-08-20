@@ -5,6 +5,7 @@ const mongoose = require('mongoose'),
 exports.connect = async () => {
     const uri = 'mongodb://127.0.0.1:27017/service'
     await mongoose.connect(uri, { useNewUrlParser: true })
+        .catch(err => console.err(err))
     console.log('connect mongo in:' + uri)
 }
 

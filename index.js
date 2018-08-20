@@ -1,3 +1,3 @@
-const app = require('./config/lib/app.js');
+const app = require('./config/app.js');
 
-app.start()
+module.exports = app.start();

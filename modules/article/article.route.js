@@ -1,11 +1,9 @@
 const article = require('./article.controller'),
-    Router = require('koa-router'),
-    router = new Router();
+    { router } = require('../../config/koa');
 
 router.get('/articles', article.list)
-    .get('/articles/:id', article.read)
     .post('/articles', article.create)
+    .get('/articles/:id', article.read)
     .put('/articles/:id', article.update)
     .delete('/articles/:id', article.delete);
 
-module.exports = router.routes();
