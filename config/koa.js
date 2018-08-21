@@ -13,6 +13,15 @@ exports.app = app;
 exports.router = router;
 
 const initMiddleware = () => {
+    app.use(async (ctx, next) => {
+        ctx.set("Access-Control-Allow-Origin", "http://localhost:8082");
+        ctx.set("Access-Control-Allow-Methods", "OPTIONS, GET, PUT, POST, DELETE");
+        ctx.set("Access-Control-Allow-Headers", "x-requested-with, accept, origin, content-type");
+        ctx.set("Access-Control-Allow-Credentials", true);
+        ctx.set("Access-Control-Max-Age", 300);
+        ctx.set("Access-Control-Expose-Headers", "myData");
+        await next();
+    })
     app.use(bodyParser())
 }
 
@@ -23,9 +32,13 @@ const initLog = () => {
     });
 }
 
+const initPassport = () => {
+    const files = glob.sync(path.resolve('./modules/*/*.passport.js'));
+    files.forEach(file => require(file));
+}
+
 const initRoutes = () => {
-    const filesPattern = path.resolve('./modules/*/*.route.js');
-    const files = glob.sync(filesPattern);
+    const files = glob.sync(path.resolve('./modules/*/*.route.js'));
     // load all router
     files.forEach(file => require(file));
 
@@ -33,8 +46,30 @@ const initRoutes = () => {
     console.log('routers all have been loaded');
 }
 
+const initErrorHandler = () => {
+    app.use(async (ctx, next) => {
+        try {
+            await next();
+        } catch (err) {
+            console.error(JSON.stringify(err))
+            ctx.response.status = err.resStatus || 500;
+            ctx.response.body = {
+                code: err.code,
+                message: err.message
+            };
+        }
+    });
+}
+
+app.on('error', function (err) {
+    console.log('logging error ', err.message);
+    console.log(err);
+});
+
 exports.init = () => {
     initMiddleware();
     initLog();
+    // initPassport();
+    initErrorHandler();
     initRoutes();
 }

@@ -1,0 +1,16 @@
+[
+    {
+        "username": "xiaoHan",
+        "nickname": "小寒",
+        "status": 1,
+        "role": "superuser",
+        "password": "qiaoming123."
+    },
+    {
+        "username": "123",
+        "nickname": "李航",
+        "status": 1,
+        "role": "admin",
+        "password": "default"
+    }
+]
