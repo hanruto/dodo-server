@@ -2,6 +2,8 @@ const Koa = require('koa'),
     bodyParser = require('koa-bodyparser'),
     path = require('path'),
     Router = require('koa-router'),
+    cors = require('koa-cors'),
+    session = require('koa-session'),
     glob = require('glob');
 
 const app = new Koa();
@@ -13,23 +15,18 @@ exports.app = app;
 exports.router = router;
 
 const initMiddleware = () => {
-    app.use(async (ctx, next) => {
-        ctx.set("Access-Control-Allow-Origin", "http://localhost:8082");
-        ctx.set("Access-Control-Allow-Methods", "OPTIONS, GET, PUT, POST, DELETE");
-        ctx.set("Access-Control-Allow-Headers", "x-requested-with, accept, origin, content-type");
-        ctx.set("Access-Control-Allow-Credentials", true);
-        ctx.set("Access-Control-Max-Age", 300);
-        ctx.set("Access-Control-Expose-Headers", "myData");
-        await next();
-    })
+    app.use(cors({ credentials: true }))
+    app.use(session({}, app))
     app.use(bodyParser())
 }
 
 const initLog = () => {
     app.use(async (ctx, next) => {
-        await next();
-        console.log(`${ctx.method} ${ctx.url}`);
-    });
+        const start = Date.now()
+        await next()
+        const ms = Date.now() - start
+        console.log(`${ctx.method} ${ctx.status} ${ctx.url} - ${ms} ms`)
+    })
 }
 
 const initPassport = () => {
@@ -42,7 +39,8 @@ const initRoutes = () => {
     // load all router
     files.forEach(file => require(file));
 
-    app.use(router.routes());
+    app.use(router.routes())
+        .use(router.allowedMethods());
     console.log('routers all have been loaded');
 }
 
@@ -67,9 +65,9 @@ app.on('error', function (err) {
 });
 
 exports.init = () => {
-    initMiddleware();
     initLog();
-    // initPassport();
     initErrorHandler();
+    initMiddleware();
+    initPassport();
     initRoutes();
 }

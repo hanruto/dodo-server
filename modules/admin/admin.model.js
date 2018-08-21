@@ -1,4 +1,5 @@
 const mongoose = require('mongoose'),
+    crypto = require('crypto'),
     Schema = mongoose.Schema;
 
 const AdminSchema = new Schema({
@@ -21,5 +22,21 @@ const AdminSchema = new Schema({
         default: 1
     }
 }, { timestamps: { createdAt: 'created', updatedAt: 'updated' }, });
+
+const encrytion = (password, salt) => {
+    return crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha1').toString('base64')
+}
+
+AdminSchema.pre('save', function (next) {
+    this.salt = crypto.randomBytes(16).toString('base64')
+    this.password = encrytion(this.password, this.salt)
+    next()
+})
+
+AdminSchema.methods = {
+    validatePassword(password) {
+        return this.password === encrytion(password, this.salt)
+    }
+}
 
 module.exports = mongoose.model('admin', AdminSchema);

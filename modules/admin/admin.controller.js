@@ -1,28 +1,30 @@
 const mongoose = require('mongoose'),
+    passport = require('koa-passport'),
     Admin = mongoose.model('admin');
 
 module.exports = {
-    async login(ctx, next) {
-        const { email, password } = ctx.request.body;
-        if (!email || !password) {
-            return
+    login(ctx) {
+        const { username, password } = ctx.request.body;
+        if (!username || !password) {
+            return ctx.throw({ code: 'AUTHINFO_ERR', message: '用户名或密码错误' })
         }
-        passport.authenticate('local', (err, admin) => {
-            if (err) return ctx.throw(err)
-            req.logIn(admin, (err) => {
+        return passport.authenticate('local', (err, admin) => {
+            if (err) return ctx.body = err
+            return ctx.logIn(admin, (err) => {
                 if (err) {
-                    return next(err);
+                    return ctx.throw(err);
                 }
                 admin.password = admin.salt = null;
-                return res.send({ code: 400000, data: admin });
+                return ctx.body = { success: true, data: admin };
             })
-        })(ctx.req, ctx.res, next)
+        })(ctx)
     },
 
     async signout(cxt) {
         cxt.req.logOut();
         cxt.res.redirect('/');
     },
+
     async list(ctx) {
         const admins = await Admin.find();
         ctx.body = { success: true, data: admins };
