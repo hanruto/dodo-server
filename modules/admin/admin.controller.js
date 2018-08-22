@@ -3,20 +3,18 @@ const mongoose = require('mongoose'),
     Admin = mongoose.model('admin');
 
 module.exports = {
-    login(ctx) {
+    async login(ctx) {
         const { username, password } = ctx.request.body;
         if (!username || !password) {
             return ctx.throw({ code: 'AUTHINFO_ERR', message: '用户名或密码错误' })
         }
+
         return passport.authenticate('local', (err, admin) => {
-            if (err) return ctx.body = err
-            return ctx.logIn(admin, (err) => {
-                if (err) {
-                    return ctx.throw(err);
-                }
+            if (admin) {
                 admin.password = admin.salt = null;
                 return ctx.body = { success: true, data: admin };
-            })
+                // return ctx.login(admin)
+            }
         })(ctx)
     },
 

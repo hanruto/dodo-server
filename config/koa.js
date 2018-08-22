@@ -16,7 +16,10 @@ exports.router = router;
 
 const initMiddleware = () => {
     app.use(cors({ credentials: true }))
-    app.use(session({}, app))
+    app.use(session({
+        key: 'koa-server',
+        maxAge: 1000 * 60 * 60 * 24 * 7
+    }, app))
     app.use(bodyParser())
 }
 
@@ -36,9 +39,7 @@ const initPassport = () => {
 
 const initRoutes = () => {
     const files = glob.sync(path.resolve('./modules/*/*.route.js'));
-    // load all router
     files.forEach(file => require(file));
-
     app.use(router.routes())
         .use(router.allowedMethods());
     console.log('routers all have been loaded');
@@ -49,9 +50,10 @@ const initErrorHandler = () => {
         try {
             await next();
         } catch (err) {
-            console.error(JSON.stringify(err))
+            console.error('has err', err)
             ctx.response.status = err.resStatus || 500;
             ctx.response.body = {
+                success: false,
                 code: err.code,
                 message: err.message
             };

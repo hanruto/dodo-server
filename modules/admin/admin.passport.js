@@ -15,10 +15,8 @@ passport.deserializeUser((id, done) => {
 });
 
 passport.use(new LocalStrategy((username, password, done) => {
-    console.log(username, password)
-    Admin.findOne({ username: username.trim() })
+    return Admin.findOne({ username: username.trim() })
         .then(admin => {
-            console.log(admin)
             if (!admin) {
                 return done({ code: 'AUTHINFO_ERR', message: '用户名或密码错误', resStatus: 200 });
             }
@@ -31,8 +29,7 @@ passport.use(new LocalStrategy((username, password, done) => {
             return done(null, admin);
         })
         .catch(err => done(err));
-}
-));
+}));
 
 app.use(passport.initialize())
 app.use(passport.session())
