@@ -4,15 +4,16 @@ const Koa = require('koa'),
     Router = require('koa-router'),
     cors = require('koa-cors'),
     session = require('koa-session'),
-    glob = require('glob');
+    glob = require('glob')
 
-const app = new Koa();
-const router = new Router();
+const app = new Koa()
+const router = new Router()
 
+app.keys = ['secret']
 router.prefix('/api/v1')
 // 单例模式，全局公用同一个app和router
-exports.app = app;
-exports.router = router;
+exports.app = app
+exports.router = router
 
 const initMiddleware = () => {
     app.use(cors({ credentials: true }))
@@ -32,44 +33,60 @@ const initLog = () => {
     })
 }
 
+const initDeploy = () => {
+    require('../deploy')
+}
+
 const initPassport = () => {
-    const files = glob.sync(path.resolve('./modules/*/*.passport.js'));
-    files.forEach(file => require(file));
+    const files = glob.sync(path.resolve('./modules/*/*.passport.js'))
+    files.forEach(file => require(file))
 }
 
 const initRoutes = () => {
-    const files = glob.sync(path.resolve('./modules/*/*.route.js'));
-    files.forEach(file => require(file));
+    const files = glob.sync(path.resolve('./modules/*/*.route.js'))
+    files.forEach(file => require(file))
     app.use(router.routes())
-        .use(router.allowedMethods());
-    console.log('routers all have been loaded');
+        .use(router.allowedMethods())
+    console.log('routers all have been loaded')
 }
 
 const initErrorHandler = () => {
     app.use(async (ctx, next) => {
         try {
-            await next();
+            await next()
         } catch (err) {
-            console.error('has err', err)
-            ctx.response.status = err.resStatus || 500;
+            console.log(JSON.stringify(err))
+            let message,
+                status
+
+            if (err.name === 'ValidationError') {
+                message = err.errors.content.message
+                status = 200
+            } else {
+                message = err.message
+                status = 200
+            }
+
+            ctx.response.status = status
             ctx.response.body = {
                 success: false,
                 code: err.code,
-                message: err.message
-            };
+                message: message
+            }
         }
-    });
+    })
 }
 
 app.on('error', function (err) {
-    console.log('logging error ', err.message);
-    console.log(err);
-});
+    console.log('logging error ', err.message)
+    console.log(err)
+})
 
 exports.init = () => {
-    initLog();
-    initErrorHandler();
-    initMiddleware();
-    initPassport();
-    initRoutes();
+    initLog()
+    initErrorHandler()
+    initMiddleware()
+    initPassport()
+    initRoutes()
+    initDeploy()
 }

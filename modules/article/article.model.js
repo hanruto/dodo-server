@@ -1,14 +1,19 @@
 const mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema
 
 const ArticleSchema = new Schema({
+    title: {
+        type: String,
+        required: '请填写标题'
+    },
     content: {
         type: String,
-        required: true
+        required: '请填写内容'
     },
     author: {
-        type: String,
-        required: true
+        type: Schema.ObjectId,
+        required: '没有作者',
+        ref: 'admin'
     },
     tags: {
         type: [String]
@@ -33,6 +38,6 @@ const ArticleSchema = new Schema({
     comment: {
         type: [String]
     }
-}, { timestamps: { createdAt: 'created', updatedAt: 'updated' }, });
+}, { timestamps: { createdAt: 'created', updatedAt: 'updated' }, })
 
-module.exports = mongoose.model('article', ArticleSchema);
+module.exports = mongoose.model('article', ArticleSchema)

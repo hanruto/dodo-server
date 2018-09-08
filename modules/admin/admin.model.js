@@ -1,6 +1,6 @@
 const mongoose = require('mongoose'),
     crypto = require('crypto'),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema
 
 const AdminSchema = new Schema({
     username: {
@@ -20,8 +20,12 @@ const AdminSchema = new Schema({
     status: {
         type: Number,
         default: 1
+    },
+    role: {
+        type: String,
+        default: 'admin'
     }
-}, { timestamps: { createdAt: 'created', updatedAt: 'updated' }, });
+}, { timestamps: { createdAt: 'created', updatedAt: 'updated' }, })
 
 const encrytion = (password, salt) => {
     return crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha1').toString('base64')
@@ -39,4 +43,4 @@ AdminSchema.methods = {
     }
 }
 
-module.exports = mongoose.model('admin', AdminSchema);
+module.exports = mongoose.model('admin', AdminSchema)
