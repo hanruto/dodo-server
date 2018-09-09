@@ -3,10 +3,11 @@ const childProcess = require('child_process'),
     { app } = require('../config/koa')
 
 const router = new Router()
-router.post('/deploy/:projectName', (ctx, next) => {
-    const { projextName } = ctx.params
-    childProcess.exec(`sh ${projextName}.deploy.sh`)
-    next()
+router.post('/deploy/:projectName', (ctx) => {
+    const { projectName } = ctx.params
+    childProcess.exec(`sh ./${projectName}.deploy.sh`)
+    ctx.body = '部署成功'
 })
 
 app.use(router.routes())
+    .use(router.allowedMethods())

@@ -6,8 +6,7 @@ echo "---------- start install devpendence ! ----------"
 yarn install
 
 echo "---------- start build ! ----------"
-yarn build
-pm2 restart server
+pm2 restart common-server
 
 if [ $? -ne 0 ]; then
   echo "---------- deploy falied ! -----------"

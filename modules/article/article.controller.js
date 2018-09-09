@@ -3,8 +3,15 @@ const mongoose = require('mongoose'),
 
 module.exports = {
     async list(ctx) {
-        const articles = await Article.find().populate('author')
-        ctx.body = { success: true, data: articles }
+        const { perPage = 15, page = 1 } = ctx.query
+        const getData = Article.find()
+            .skip((page - 1) * perPage)
+            .limit(Number(perPage))
+            .populate('author')
+
+        const getCount = Article.count()
+        const [list, count] = await Promise.all([getData, getCount])
+        ctx.body = { success: true, data: { list, perPage, page, count }, }
     },
 
     async read(ctx) {
