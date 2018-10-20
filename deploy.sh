@@ -1,3 +1,4 @@
+# 第一次需要手动部署
 #!/bin/sh
 echo "---------- git pull ---------"
 git pull 
