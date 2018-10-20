@@ -1,5 +1,7 @@
 # 第一次需要手动部署
 #!/bin/sh
+cd /project/common-server
+
 echo "---------- git pull ---------"
 git pull 
 

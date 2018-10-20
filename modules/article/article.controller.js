@@ -5,6 +5,7 @@ module.exports = {
     async list(ctx) {
         const { perPage = 15, page = 1 } = ctx.query
         const getData = Article.find()
+            .sort('-created')
             .skip((page - 1) * perPage)
             .limit(Number(perPage))
             .populate('author')
