@@ -20,4 +20,9 @@ module.exports = {
         const message = await LeavedMessage.create(info)
         ctx.body = { success: true, data: message, message: '保存成功' }
     },
+
+    async delete(ctx) {
+        await LeavedMessage.deleteOne({ _id: ctx.params.id })
+        ctx.body = { success: true }
+    },
 }
