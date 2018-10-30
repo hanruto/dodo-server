@@ -38,6 +38,28 @@ module.exports = {
         ctx.body = { success: true }
     },
 
+    async comment(ctx) {
+        const comment = ctx.request.body
+
+        const article = await Article.findById({ _id: ctx.params.id })
+
+        article.comments.push(comment)
+        const updatedArticle = await article.save()
+            .catch(err => { throw new Error(err) })
+
+        ctx.body = { success: true, data: updatedArticle }
+    },
+
+    async deleteComment(ctx) {
+        const {id, commentId} = ctx.params
+        const article = await Article.findById({ _id: id })
+        article.comments = article.comments.filter(comment => comment._id.toString() !== commentId)
+
+        const updatedArticle = await article.save()
+
+        ctx.body = { success: true, data: updatedArticle }
+    },
+
     async getTags(ctx) {
         let tags = new Set()
         const articles = await Article.find().select('tags')

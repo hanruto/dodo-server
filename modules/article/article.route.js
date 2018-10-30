@@ -7,5 +7,5 @@ router.get('/articles', article.list)
     .get('/articles/:id', article.read)
     .put('/articles/:id', article.update)
     .delete('/articles/:id', article.delete)
-
-
+    .patch('/articles/:id/comment', article.comment)
+    .delete('/articles/:id/comment/:commentId', article.deleteComment)
