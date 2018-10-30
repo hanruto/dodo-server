@@ -38,8 +38,8 @@ const ArticleSchema = new Schema({
     comments: {
         default: [],
         type: [{
-            nickname: {type: String, required: true},
-            content: {type: String, required: true},
+            nickname: {type: String, required: true, created: Date.now()},
+            content: {type: String, required: true, created: Date.now()},
         }]
     }
 }, { timestamps: { createdAt: 'created', updatedAt: 'updated' }, })
