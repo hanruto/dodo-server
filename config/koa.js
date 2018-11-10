@@ -11,7 +11,7 @@ const router = new Router()
 
 app.keys = ['secret']
 router.prefix('/api')
-// 单例模式，全局公用同一个app和router
+
 exports.app = app
 exports.router = router
 
