@@ -1,33 +1,44 @@
 const request = require('request')
 
-const basicUrl = 'https://api.bzqll.com/music/netease'
-const key = 579621905
 
-module.exports = {
-  async list(ctx) {
-    const result = await new Promise(
-      (resolve) =>
-        request(`${basicUrl}/songList?key=${key}&id=3778678&limit=10&offset=0`, function (error, response, body) {
-          if (!error) {
-            const data = JSON.parse(body).data
-            resolve(data)
-          }
-        }))
-
-    ctx.body = { success: true, data: result }
-  },
-
-  async getLyrics(ctx) {
-    const id = ctx.params.id
-
-    const result = await new Promise(
-      (resolve) =>
-        request(`${basicUrl}/lrc?key=${key}&id=${id}`, function (error, response, body) {
-          if (!error) {
-            resolve(body)
-          }
-        }))
-
-    ctx.body = { success: true, data: {lyric: result} }
+const toQuertString = (opt) => {
+  try {
+    return Object.entries(opt).reduce((result, [key, value], index) => {
+      if (index === 0) {
+        return result += `?${key}=${value}`
+      } else {
+        return result += `&${key}=${value}`
+      }
+    }, '')
+  } catch (err) {
+    return ''
   }
 }
+
+const NetEaseRequest = async (ctx) => {
+  const basicUrl = 'https://api.bzqll.com/music/netease'
+  const key = 579621905
+  const id = 3778678
+  const params = toQuertString({ ...{ key, id }, ...ctx.query })
+  const originUrl = ctx.request.url.replace(/\?.*$/, '')
+  const url = originUrl.replace('/api/musics', basicUrl) + params
+  
+  const data = await new Promise(
+    (resolve) => request(url, (error, response, body) => {
+      let data
+      try {
+        data = JSON.parse(body)
+        if(data.result){
+          data = data.data
+        }
+      } catch (err) {
+        data = body
+      }
+      resolve(data)
+    })
+  )
+
+  ctx.body = { success: true, data }
+}
+
+module.exports = NetEaseRequest
