@@ -11,6 +11,9 @@ const ViewRecordSchema = new Schema({
     type: String,
     required: true
   },
+  info: {
+    type: Object
+  }
 }, { timestamps: { createdAt: 'created', updatedAt: 'updated' }, })
 
 module.exports = mongoose.model('view-record', ViewRecordSchema)
