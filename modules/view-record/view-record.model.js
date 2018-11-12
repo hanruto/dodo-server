@@ -1,7 +1,8 @@
+
 const mongoose = require('mongoose'),
   Schema = mongoose.Schema
 
-const SiteInfoSchema = new Schema({
+const ViewRecordSchema = new Schema({
   siteName: {
     type: String,
     required: true
@@ -12,4 +13,4 @@ const SiteInfoSchema = new Schema({
   },
 }, { timestamps: { createdAt: 'created', updatedAt: 'updated' }, })
 
-module.exports = mongoose.model('site-info', SiteInfoSchema)
+module.exports = mongoose.model('view-record', ViewRecordSchema)

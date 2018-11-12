@@ -1,5 +1,5 @@
 const mongoose = require('mongoose'),
-  SiteInfo = mongoose.model('site-info')
+  SiteInfo = mongoose.model('view-record')
 
 module.exports = {
   async create(ctx) {
