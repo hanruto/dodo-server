@@ -6,7 +6,7 @@ module.exports = {
     const info = Object.assign(ctx.request.body)
     await SiteInfo.create({
       ...info,
-      ...{ ip: ctx.request.ip }
+      ...{ ip: ctx.request.headers['x-forward-for'] }
     })
 
     ctx.body = { success: true }
