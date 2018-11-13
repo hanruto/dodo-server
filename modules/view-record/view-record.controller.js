@@ -19,12 +19,15 @@ module.exports = {
 
   async list(ctx) {
     const { offset = 0, limit = 20 } = ctx.query
-
-    const record = await SiteInfo.find({ siteName: ctx.params.siteName })
+    const getCount = SiteInfo.count()
+    const getList = SiteInfo.find({ siteName: ctx.params.siteName })
       .sort('-created')
       .skip(Number(offset))
       .limit(Number(limit))
 
-    ctx.body = { success: true, data: record }
+    const [count, list] = await Promise.all([getCount, getList])
+
+
+    ctx.body = { success: true, data: { list, count, offset, limit } }
   },
 }
