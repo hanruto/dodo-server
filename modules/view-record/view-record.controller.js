@@ -18,7 +18,12 @@ module.exports = {
   },
 
   async list(ctx) {
+    const { offset = 0, limit = 20 } = ctx.query
+
     const record = await SiteInfo.find({ siteName: ctx.params.siteName })
+      .sort('-created')
+      .skip(Number(offset))
+      .limit(Number(limit))
 
     ctx.body = { success: true, data: record }
   },
