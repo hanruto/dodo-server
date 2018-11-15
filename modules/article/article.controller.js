@@ -1,5 +1,7 @@
 const mongoose = require('mongoose'),
-  Article = mongoose.model('article')
+  Article = mongoose.model('article'),
+  ArticleTag = mongoose.model('article-tag')
+
 
 module.exports = {
   async list(ctx) {
@@ -8,7 +10,9 @@ module.exports = {
       .sort('-created')
       .skip((page - 1) * perPage)
       .limit(Number(perPage))
-      .populate('author')
+      // .populate('tags')
+      // .populate('author')
+      
 
     const getCount = Article.count()
     const [list, count] = await Promise.all([getData, getCount])
@@ -17,14 +21,29 @@ module.exports = {
 
   async read(ctx) {
     const article = await Article.findById(ctx.params.id)
+      .populate('author')
+      .populate('tags')
+
     ctx.body = { success: true, data: article }
   },
 
   async create(ctx) {
-    const articleInfo = Object.assign(ctx.request.body, {
-      author: ctx.state.user._id
-    })
-    const article = await Article.create(articleInfo)
+    const articleContent = ctx.request.body
+
+    const tags = articleContent.tags || []
+
+    const gettedTags = await Promise.all(tags.map(tag => {
+      let _id = tag._id
+      if (_id) return tag
+
+      return ArticleTag.findOne(tag)
+        .then(findTag => {
+          return findTag || ArticleTag.create(tag)
+        })
+    }))
+
+    articleContent.tags = gettedTags.map(tag => tag._id)
+    const article = await Article.create(Object.assign(articleContent, { author: ctx.state.user._id }))
     ctx.body = { success: true, data: article, message: '保存成功' }
   },
 
@@ -51,7 +70,7 @@ module.exports = {
   },
 
   async deleteComment(ctx) {
-    const {id, commentId} = ctx.params
+    const { id, commentId } = ctx.params
     const article = await Article.findById({ _id: id })
     article.comments = article.comments.filter(comment => comment._id.toString() !== commentId)
 
@@ -61,11 +80,7 @@ module.exports = {
   },
 
   async getTags(ctx) {
-    let tags = new Set()
-    const articles = await Article.find().select('tags')
-    articles.forEach(article => {
-      article.tags.forEach(tag => tags.add(tag))
-    })
-    ctx.body = { success: true, data: Array.from(tags) }
+    const tags = await ArticleTag.find()
+    ctx.body = { success: true, data: tags }
   }
 }

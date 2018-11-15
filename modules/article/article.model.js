@@ -16,7 +16,10 @@ const ArticleSchema = new Schema({
     ref: 'admin'
   },
   tags: {
-    type: [String]
+    type: [{
+      type: Schema.ObjectId,
+      ref: 'article-tag'
+    }],
   },
   type: {
     type: Number,
@@ -38,8 +41,8 @@ const ArticleSchema = new Schema({
   comments: {
     default: [],
     type: [{
-      nickname: {type: String, required: true, created: Date.now()},
-      content: {type: String, required: true, created: Date.now()},
+      nickname: { type: String, required: true, created: Date.now() },
+      content: { type: String, required: true, created: Date.now() },
     }]
   }
 }, { timestamps: { createdAt: 'created', updatedAt: 'updated' }, })

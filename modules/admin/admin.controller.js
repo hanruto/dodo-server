@@ -36,6 +36,10 @@ module.exports = {
     ctx.body = { success: true, data: admin }
   },
 
+  async getInfo(ctx) {
+    ctx.body = { success: true, data: ctx.state.user }
+  },
+
   async update(ctx) {
     const admin = await Admin.findByIdAndUpdate(ctx.params.id, ctx.request.body, { new: true })
     ctx.body = { success: true, data: admin }
