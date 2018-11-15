@@ -7,10 +7,8 @@ migTool.initApp()
 
     Article.find()
       .then(articles => Promise.all(articles.map(article => {
-        article.tags = []
+        article.tags = null
         return article.save()
       })))
-      .then(result => {
-        console.log(result)
-      })
+      .then(result => console.log(result))
   })

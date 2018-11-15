@@ -3,15 +3,32 @@ const mongoose = require('mongoose'),
   ArticleTag = mongoose.model('article-tag')
 
 
+const getTagIds = async (tags) => {
+  if(!tags) return null
+  
+  const gettedTags = await Promise.all(
+    tags.map(tag => {
+      console.log(tag)
+      let _id = tag._id
+      if (_id) return tag
+
+      return ArticleTag.findOne(tag)
+        .then(findTag => findTag || ArticleTag.create(tag))
+    })
+  )
+
+  return gettedTags.map(tag => tag._id)
+}
 module.exports = {
   async list(ctx) {
     const { perPage = 15, page = 1 } = ctx.query
+
     const getData = Article.find()
       .sort('-created')
       .skip((page - 1) * perPage)
       .limit(Number(perPage))
-      // .populate('tags')
-      // .populate('author')
+      .populate('tags')
+      .populate('author')
       
 
     const getCount = Article.count()
@@ -29,27 +46,16 @@ module.exports = {
 
   async create(ctx) {
     const articleContent = ctx.request.body
-
-    const tags = articleContent.tags || []
-
-    const gettedTags = await Promise.all(tags.map(tag => {
-      let _id = tag._id
-      if (_id) return tag
-
-      return ArticleTag.findOne(tag)
-        .then(findTag => {
-          return findTag || ArticleTag.create(tag)
-        })
-    }))
-
-    articleContent.tags = gettedTags.map(tag => tag._id)
+    articleContent.tags = await getTagIds(articleContent.tags)
     const article = await Article.create(Object.assign(articleContent, { author: ctx.state.user._id }))
     ctx.body = { success: true, data: article, message: '保存成功' }
   },
 
   async update(ctx) {
-    const article = await Article.findByIdAndUpdate(ctx.params.id, ctx.request.body, { new: true })
-    ctx.body = { success: true, data: article }
+    const articleContent = ctx.request.body 
+    articleContent.tags = await getTagIds(articleContent.tags)
+    const article = await Article.findByIdAndUpdate(ctx.params.id, articleContent, { new: true })
+    ctx.body = { success: true, data: article, message: '修改成功' }
   },
 
   async delete(ctx) {
@@ -82,5 +88,11 @@ module.exports = {
   async getTags(ctx) {
     const tags = await ArticleTag.find()
     ctx.body = { success: true, data: tags }
+  },
+
+  async deleteTag(ctx){
+    const { tagId } = ctx.params
+    await ArticleTag.remove({_id: tagId})
+    ctx.body = { success: true }
   }
 }
