@@ -8,7 +8,6 @@ const getTagIds = async (tags) => {
 
   const gettedTags = await Promise.all(
     tags.map(tag => {
-      console.log(tag)
       let _id = tag._id
       if (_id) return tag
 
@@ -22,12 +21,10 @@ const getTagIds = async (tags) => {
 
 module.exports = {
   async list(ctx) {
-    const { perPage = 15, page = 1, tag } = ctx.query
+    const { perPage = 15, page = 1, tags } = ctx.query
 
     const query = {}
-    tag && (query.tags = { _id: tag })
-    console.log(query)
-
+    if(tags) (query.tags = {$in: tags})
     const getData = Article.find(query)
       .sort('-created')
       .skip((page - 1) * perPage)
@@ -36,7 +33,7 @@ module.exports = {
       .populate('author')
 
 
-    const getCount = Article.count()
+    const getCount = Article.count(query)
     const [list, count] = await Promise.all([getData, getCount])
     ctx.body = { success: true, data: { list, perPage, page, count }, }
   },
@@ -99,5 +96,14 @@ module.exports = {
     const { tagId } = ctx.params
     await ArticleTag.remove({ _id: tagId })
     ctx.body = { success: true }
+  },
+
+  async addViewCount(ctx) {
+    const { id } = ctx.params
+    const article = await Article.findById(id)
+
+    article.viewCount++
+    await article.save()
+    ctx.body = { success: true, data: article }
   }
 }
