@@ -4,8 +4,8 @@ const mongoose = require('mongoose'),
 
 
 const getTagIds = async (tags) => {
-  if(!tags) return null
-  
+  if (!tags) return null
+
   const gettedTags = await Promise.all(
     tags.map(tag => {
       console.log(tag)
@@ -19,17 +19,22 @@ const getTagIds = async (tags) => {
 
   return gettedTags.map(tag => tag._id)
 }
+
 module.exports = {
   async list(ctx) {
-    const { perPage = 15, page = 1 } = ctx.query
+    const { perPage = 15, page = 1, tag } = ctx.query
 
-    const getData = Article.find()
+    const query = {}
+    tag && (query.tags = { _id: tag })
+    console.log(query)
+
+    const getData = Article.find(query)
       .sort('-created')
       .skip((page - 1) * perPage)
       .limit(Number(perPage))
       .populate('tags')
       .populate('author')
-      
+
 
     const getCount = Article.count()
     const [list, count] = await Promise.all([getData, getCount])
@@ -52,7 +57,7 @@ module.exports = {
   },
 
   async update(ctx) {
-    const articleContent = ctx.request.body 
+    const articleContent = ctx.request.body
     articleContent.tags = await getTagIds(articleContent.tags)
     const article = await Article.findByIdAndUpdate(ctx.params.id, articleContent, { new: true })
     ctx.body = { success: true, data: article, message: '修改成功' }
@@ -90,9 +95,9 @@ module.exports = {
     ctx.body = { success: true, data: tags }
   },
 
-  async deleteTag(ctx){
+  async deleteTag(ctx) {
     const { tagId } = ctx.params
-    await ArticleTag.remove({_id: tagId})
+    await ArticleTag.remove({ _id: tagId })
     ctx.body = { success: true }
   }
 }
