@@ -21,12 +21,13 @@ const getTagIds = async (tags) => {
 
 module.exports = {
   async list(ctx) {
-    const { perPage = 15, page = 1, tags } = ctx.query
+    const { perPage = 15, page = 1, tags, sort } = ctx.query
 
     const query = {}
-    if(tags) (query.tags = {$in: tags})
+    if (tags) (query.tags = { $in: tags })
+    
     const getData = Article.find(query)
-      .sort('-created')
+      .sort(sort || '-created')
       .skip((page - 1) * perPage)
       .limit(Number(perPage))
       .populate('tags')
