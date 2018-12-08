@@ -8,6 +8,7 @@
     "start": "node index"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "glob": "^7.1.2",
     "koa": "^2.5.2",
     "koa-bodyparser": "^4.2.1",
@@ -20,7 +21,8 @@
     "lodash": "^4.17.10",
     "mongoose": "^5.2.9",
     "passport": "^0.4.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "qs": "^6.5.2"
   },
   "devDependencies": {
     "eslint": "^5.4.0",

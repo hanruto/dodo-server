@@ -1,44 +1,22 @@
-const request = require('request')
-
-
-const toQuertString = (opt) => {
-  try {
-    return Object.entries(opt).reduce((result, [key, value], index) => {
-      if (index === 0) {
-        return result += `?${key}=${value}`
-      } else {
-        return result += `&${key}=${value}`
-      }
-    }, '')
-  } catch (err) {
-    return ''
-  }
-}
+const axios = require('axios')
 
 const NetEaseRequest = async (ctx) => {
   const basicUrl = 'https://api.bzqll.com/music/netease'
   const key = 579621905
   const id = 3778678
-  const params = toQuertString({ ...{ key, id }, ...ctx.query })
+  const params = { ...{ key, id }, ...ctx.query }
   const originUrl = ctx.request.url.replace(/\?.*$/, '')
-  const url = originUrl.replace('/api/musics', basicUrl) + params
-  
-  const data = await new Promise(
-    (resolve) => request(url, (error, response, body) => {
-      let data
-      try {
-        data = JSON.parse(body)
-        if(data.result){
-          data = data.data
-        }
-      } catch (err) {
-        data = body
-      }
-      resolve(data)
-    })
-  )
+  const url = originUrl.replace('/api/musics', basicUrl)
 
-  ctx.body = { success: true, data }
+  console.log(url)
+
+  const result = await axios.get(url, { params })
+
+  if (result.data) {
+    ctx.body = { data: result.data.data, success: true }
+  } else {
+    ctx.body = { success: false, msg: '请求出错' }
+  }
 }
 
 module.exports = NetEaseRequest
