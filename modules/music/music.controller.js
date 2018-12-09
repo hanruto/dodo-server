@@ -1,9 +1,10 @@
 const axios = require('axios')
 
 const NetEaseRequest = async (ctx) => {
-  const basicUrl = 'https://api.bzqll.com/music/netease'
+  const { musicOrigin = 1, ...query } = ctx.query
+  const basicUrl = `https://api.bzqll.com/music/${musicOrigin === 1 ? 'netease' : 'tencent'}`
   const key = 579621905
-  const params = { ...{ key }, ...ctx.query }
+  const params = { ...{ key }, ...query }
   const originUrl = ctx.request.url.replace(/\?.*$/, '')
   const url = originUrl.replace('/api/musics', basicUrl)
 
