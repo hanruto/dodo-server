@@ -3,12 +3,12 @@ const migTool = require('./tool.js')
 migTool.initApp()
   .then(() => {
     const mongoose = require('mongoose')
-    const LeavedMessage = mongoose.model('leaved-message')
+    const Article = mongoose.model('article')
 
-    LeavedMessage.find()
-      .then(messages => Promise.all(messages.map(message => {
-        message.type = 0
-        return message.save()
+    Article.find()
+      .then(articles => Promise.all(articles.map(article => {
+        article.comments = []
+        return article.save()
       })))
       .then(result => console.log(result))
   })
