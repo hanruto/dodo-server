@@ -10,5 +10,6 @@ migTool.initApp()
         article.comments = []
         return article.save()
       })))
-      .then(result => console.log(result))
+      .then(result => result.forEach(item => console.log(item.comments)))
+      .then(() => process.exit())
   })
