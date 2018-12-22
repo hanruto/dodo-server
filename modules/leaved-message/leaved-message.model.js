@@ -9,6 +9,11 @@ const LeavedMessageSchema = new Schema({
   message: {
     type: String,
     required: '请填写内容'
+  },
+  type: {
+    type: Number,
+    enum: [0, 1], // 0 留言板，1 文章
+    default: 0,
   }
 }, { timestamps: { createdAt: 'created', updatedAt: 'updated' }, })
 

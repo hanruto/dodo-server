@@ -3,14 +3,14 @@ const mongoose = require('mongoose'),
 
 module.exports = {
   async list(ctx) {
-    const { perPage = 15, page = 1 } = ctx.query
-    const getData = LeavedMessage.find()
+    const { perPage = 15, page = 1, ...rest } = ctx.query
+    const getData = LeavedMessage.find(rest)
       .sort('-created')
       .skip((Number(page) - 1) * Number(perPage))
       .limit(Number(perPage))
       .populate('author')
 
-    const getCount = LeavedMessage.count()
+    const getCount = LeavedMessage.count(rest)
     const [list, count] = await Promise.all([getData, getCount])
     ctx.body = { success: true, data: { list, perPage, page, count }, }
   },

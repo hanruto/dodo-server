@@ -1,6 +1,7 @@
 const mongoose = require('mongoose'),
   Article = mongoose.model('article'),
-  ArticleTag = mongoose.model('article-tag')
+  ArticleTag = mongoose.model('article-tag'),
+  LeavedMessage = mongoose.model('leaved-message')
 
 
 const getTagIds = async (tags) => {
@@ -25,7 +26,7 @@ module.exports = {
 
     const query = {}
     if (tags) (query.tags = { $in: tags })
-    
+
     const getData = Article.find(query)
       .sort(sort || '-created')
       .skip((page - 1) * perPage)
@@ -43,6 +44,7 @@ module.exports = {
     const article = await Article.findById(ctx.params.id)
       .populate('author')
       .populate('tags')
+      .populate({ path: 'comments', options: { sort: { 'created': -1 } } })
 
     ctx.body = { success: true, data: article }
   },
@@ -68,14 +70,13 @@ module.exports = {
 
   async comment(ctx) {
     const comment = ctx.request.body
-
+    comment.type = 1
+    const leavedMessage = await LeavedMessage.create(comment)
     const article = await Article.findById({ _id: ctx.params.id })
+    article.comments.push(leavedMessage._id)
+    await article.save()
 
-    article.comments.push(comment)
-    const updatedArticle = await article.save()
-      .catch(err => { throw new Error(err) })
-
-    ctx.body = { success: true, data: updatedArticle }
+    ctx.body = { success: true, data: leavedMessage }
   },
 
   async deleteComment(ctx) {

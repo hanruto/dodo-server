@@ -41,8 +41,8 @@ const ArticleSchema = new Schema({
   comments: {
     default: [],
     type: [{
-      nickname: { type: String, required: true, created: Date.now() },
-      content: { type: String, required: true, created: Date.now() },
+      ref: 'leaved-message',
+      type: Schema.ObjectId,
     }]
   }
 }, { timestamps: { createdAt: 'created', updatedAt: 'updated' }, })
