@@ -9,7 +9,6 @@ exports.connect = async () => {
   console.log('connect mongo in:' + uri)
 }
 
-
 exports.loadModels = () => {
   const filesPattern = path.resolve('./modules/*/*.model.js')
   const files = glob.sync(filesPattern)
