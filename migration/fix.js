@@ -7,9 +7,10 @@ migTool.initApp()
 
     Article.find()
       .then(articles => Promise.all(articles.map(article => {
-        article.comments = []
+        article.comments = null
         return article.save()
       })))
       .then(result => console.log(result))
       .then(() => process.exit())
+      .catch(() => process.exit())
   })
