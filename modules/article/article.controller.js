@@ -73,9 +73,12 @@ module.exports = {
     comment.type = 1
     const leavedMessage = await LeavedMessage.create(comment)
     const article = await Article.findById({ _id: ctx.params.id })
-    article.comments.push(leavedMessage._id)
+    if (article.comments) {
+      article.comments.push(leavedMessage._id)
+    } else {
+      article.comments = [leavedMessage._id]
+    }
     await article.save()
-
     ctx.body = { success: true, data: leavedMessage }
   },
 
