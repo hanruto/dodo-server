@@ -3,4 +3,4 @@ const viewRecord = require('./view-record.controller'),
 
 router.post('/view-records', viewRecord.create)
   .get('/view-records/:siteName/count', viewRecord.count)
-  .get('/view-records/:siteName', viewRecord.list)
+  .get('/view-records', viewRecord.list)
