@@ -8,7 +8,6 @@ const NetEaseRequest = async (ctx) => {
   query.key = key
   const originUrl = ctx.request.url.replace(/\?.*$/, '')
   const url = originUrl.replace('/api/musics', basicUrl)
-  console.log(url, query)
   const res = await axios.get(url, { params:query })
 
   if (res.data) {

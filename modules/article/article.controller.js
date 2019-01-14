@@ -28,13 +28,11 @@ module.exports = {
     if (tags) (query.tags = { $in: tags })
 
     const getData = Article.find(query)
+      .select('-content')
       .sort(sort || '-created')
       .skip((page - 1) * perPage)
       .limit(Number(perPage))
-      .populate('tags')
-      .populate('author')
-
-
+      
     const getCount = Article.count(query)
     const [list, count] = await Promise.all([getData, getCount])
     ctx.body = { success: true, data: { list, perPage, page, count }, }
