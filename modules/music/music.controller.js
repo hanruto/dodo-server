@@ -8,13 +8,14 @@ const NetEaseRequest = async (ctx) => {
   query.key = key
   const originUrl = ctx.request.url.replace(/\?.*$/, '')
   const url = originUrl.replace('/api/musics', basicUrl)
-  const res = await axios.get(url, { params:query })
+  const res = await axios.get(url, { params: query })
+  console.log(url)
 
   if (res.data) {
     if (typeof (res.data) === 'string') {
       ctx.body = { data: res.data, success: true }
     } else {
-      ctx.body = { data: res.data.data, success: true }
+      ctx.body = { data: res.data.data || res.data, success: true }
     }
   } else {
     ctx.body = { success: false, msg: '请求出错' }
