@@ -1,7 +1,7 @@
 const axios = require('axios')
 
-const basicUrl = 'https://api.bzqll.com/music/netease'
-const key = 579621905
+const basicUrl = 'https://vip.api.bzqll.com/music/netease'
+const key = 765929048
 
 const NetEaseRequest = async (ctx) => {
   const query = ctx.query || {}
@@ -10,6 +10,7 @@ const NetEaseRequest = async (ctx) => {
   const url = originUrl.replace('/api/musics', basicUrl)
   const res = await axios.get(url, { params: query })
 
+  console.log(res.data)
   if (res.data) {
     if (typeof (res.data) === 'string') {
       ctx.body = { data: res.data, success: true }
