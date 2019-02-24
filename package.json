@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "bcrypt": "^3.0.4",
     "glob": "^7.1.2",
+    "jsonwebtoken": "^8.5.0",
     "koa": "^2.5.2",
     "koa-bodyparser": "^4.2.1",
     "koa-cors": "^0.0.16",
@@ -20,9 +22,12 @@
     "koa2-cors": "^2.0.6",
     "lodash": "^4.17.10",
     "mongoose": "^5.2.9",
+    "nodemailer": "^5.1.1",
     "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "qs": "^6.5.2"
+    "qs": "^6.5.2",
+    "random-string": "^0.2.0"
   },
   "devDependencies": {
     "eslint": "^5.4.0",

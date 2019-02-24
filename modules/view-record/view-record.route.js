@@ -1,6 +1,9 @@
 const viewRecord = require('./view-record.controller'),
-  { router } = require('../../config/koa')
+  { checkRole } = require('../../tools/acl')
 
-router.post('/view-records', viewRecord.create)
-  .get('/view-records/:siteName/count', viewRecord.count)
-  .get('/view-records', viewRecord.list)
+module.exports = router => {
+  router
+    .post('/view-records', viewRecord.create)
+    .get('/view-records/:siteName/count', viewRecord.count)
+    .get('/view-records', checkRole('admin'), viewRecord.list)
+}

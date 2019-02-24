@@ -1,5 +1,5 @@
-const musicProxy = require('./music.controller'),
-  { router } = require('../../config/koa')
+const musicProxy = require('./music.controller')
 
-router.get('/musics/:path', musicProxy)
-
+module.exports = router => {
+  router.get('/musics/:path', musicProxy)
+}

@@ -4,7 +4,8 @@ const Koa = require('koa'),
   Router = require('koa-router'),
   cors = require('koa-cors'),
   session = require('koa-session'),
-  glob = require('glob')
+  glob = require('glob'),
+  passport = require('koa-passport')
 
 const app = new Koa()
 const router = new Router()
@@ -17,10 +18,15 @@ exports.router = router
 
 const initMiddleware = () => {
   app.use(cors({ credentials: true }))
-  app.use(session({
-    key: 'koa-server',
-    maxAge: 1000 * 60 * 60 * 24 * 7
-  }, app))
+  app.use(
+    session(
+      {
+        key: 'koa-server',
+        maxAge: 1000 * 60 * 60 * 24 * 7
+      },
+      app
+    )
+  )
   app.use(bodyParser())
 }
 
@@ -39,14 +45,15 @@ const initDeploy = () => {
 
 const initPassport = () => {
   const files = glob.sync(path.resolve('./modules/*/*.passport.js'))
-  files.forEach(file => require(file))
+  files.forEach(file => require(file)(passport))
+  app.use(passport.initialize())
+  app.use(passport.session())
 }
 
 const initRoutes = () => {
   const files = glob.sync(path.resolve('./modules/*/*.route.js'))
-  files.forEach(file => require(file))
-  app.use(router.routes())
-    .use(router.allowedMethods())
+  files.forEach(file => require(file)(router))
+  app.use(router.routes()).use(router.allowedMethods())
   console.log('routers all have been loaded')
 }
 
@@ -55,12 +62,12 @@ const initErrorHandler = () => {
     try {
       await next()
     } catch (err) {
-      console.log(JSON.stringify(err))
-      let message,
-        status
-
+      let message, status, errors
+      console.error(err)
       if (err.name === 'ValidationError') {
-        message = err.errors.content.message
+        let originErrors = JSON.parse(JSON.stringify(err.errors))
+        errors = Object.values(originErrors).map(error => error.message)
+        message = err._message
         status = 200
       } else {
         message = err.message
@@ -71,13 +78,14 @@ const initErrorHandler = () => {
       ctx.response.body = {
         success: false,
         code: err.code,
-        message: message
+        message: message,
+        errors
       }
     }
   })
 }
 
-app.on('error', function (err) {
+app.on('error', function(err) {
   console.log('logging error ', err.message)
   console.log(err)
 })
