@@ -10,7 +10,7 @@ exports.checkRoles = roles => {
       return passport.authenticate('jwt', { session: false })(ctx, next)
     }
 
-    if (roles.inlcudes('admin', 'superuser')) {
+    if (roles.includes('admin') || roles.includes('superuser')) {
       if (!ctx.state.user) {
         return ctx.throw({ code: 'NO_ACCOUNT', message: 'Please login', resStatus: 401 })
       }

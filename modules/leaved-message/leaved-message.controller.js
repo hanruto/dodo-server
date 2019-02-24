@@ -9,6 +9,7 @@ module.exports = {
       .skip((Number(page) - 1) * Number(perPage))
       .limit(Number(perPage))
       .populate('user', ['username', 'email'])
+      .populate('blog', ['title'])
 
     const getCount = LeavedMessage.count(rest)
     const [list, count] = await Promise.all([getData, getCount])
