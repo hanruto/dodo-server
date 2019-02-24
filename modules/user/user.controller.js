@@ -5,13 +5,12 @@ const mongoose = require('mongoose'),
   _ = require('lodash'),
   jwt = require('jsonwebtoken')
 
-const VerifyCodeEmailTemplate = `
-<h3>你好</h3>
-<p>欢迎注册dodoblog，验证码是 <i>{{code}}</i></p>
-`
-
 exports.checkEmailAndSendCode = async ctx => {
   const { email } = ctx.request.body
+  const VerifyCodeEmailTemplate = `
+  <h3>你好</h3>
+  <p>欢迎注册dodoblog，验证码是 <i>{{code}}</i></p>
+  `
 
   const user = await userModel.findOne({ email })
   if (user) {
@@ -69,16 +68,35 @@ exports.login = async ctx => {
   }
 }
 
-exports.list = async ctx => {
-  const users = await userModel.find()
-  ctx.body = { success: true, users }
-}
-
 exports.getInfo = ctx => {
   const user = ctx.state.user
 
   ctx.body = {
     success: true,
     data: _.omit(user.toObject(), ['password', 'salt'])
+  }
+}
+
+exports.list = async ctx => {
+  const { perPage = 15, page = 1, ...rest } = ctx.query
+  const getList = userModel
+    .find(rest)
+    .sort('-created')
+    .skip((Number(page) - 1) * Number(perPage))
+    .limit(Number(perPage))
+
+  const getCount = userModel.count(rest)
+  const [list, total] = await Promise.all([getList, getCount])
+
+  ctx.body = { success: true, data: { list, page, perPage, total } }
+}
+
+exports.remove = async ctx => {
+  const { id } = ctx.params
+  await userModel.findByIdAndRemove(id)
+
+  ctx.body = {
+    success: true,
+    message: '删除成功'
   }
 }

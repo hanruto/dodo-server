@@ -8,4 +8,5 @@ module.exports = router => {
     .post('/users', userController.signUp)
     .get('/users', checkRoles('admin'), userController.list)
     .get('/users/info', checkRoles('user'), userController.getInfo)
+    .delete('/users/:id', checkRoles('superuser'), userController.remove)
 }
