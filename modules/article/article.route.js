@@ -1,15 +1,15 @@
 const article = require('./article.controller'),
-  { checkRole } = require('../../tools/acl')
+  { checkRoles } = require('../../tools/acl')
 
 module.exports = router => {
   router
     // 标签
     .get('/articles/tags', article.getTags)
-    .delete('/articles/tags/:tagId', checkRole('admin'), article.deleteTag)
+    .delete('/articles/tags/:tagId', checkRoles('admin'), article.deleteTag)
 
     // 评论
     .put('/articles/:id/comment', article.comment)
-    .delete('/articles/:id/comment/:commentId', checkRole('admin'), article.deleteComment)
+    .delete('/articles/:id/comment/:commentId', checkRoles('admin'), article.deleteComment)
 
     // 阅读
     .put('/articles/:id/view-count', article.addViewCount)
@@ -17,7 +17,7 @@ module.exports = router => {
     // 文章管理
     .get('/articles', article.list)
     .get('/articles/:id', article.read)
-    .post('/articles', checkRole('admin'), article.create)
-    .put('/articles/:id', checkRole('admin'), article.update)
-    .delete('/articles/:id', checkRole('admin'), article.delete)
+    .post('/articles', checkRoles('admin'), article.create)
+    .put('/articles/:id', checkRoles('admin'), article.update)
+    .delete('/articles/:id', checkRoles('admin'), article.delete)
 }

@@ -3,8 +3,7 @@ const mongoose = require('mongoose'),
   ArticleTag = mongoose.model('article-tag'),
   LeavedMessage = mongoose.model('leaved-message')
 
-
-const getTagIds = async (tags) => {
+const getTagIds = async tags => {
   if (!tags) return null
 
   const gettedTags = await Promise.all(
@@ -12,8 +11,7 @@ const getTagIds = async (tags) => {
       let _id = tag._id
       if (_id) return tag
 
-      return ArticleTag.findOne(tag)
-        .then(findTag => findTag || ArticleTag.create(tag))
+      return ArticleTag.findOne(tag).then(findTag => findTag || ArticleTag.create(tag))
     })
   )
 
@@ -25,24 +23,24 @@ module.exports = {
     const { perPage = 15, page = 1, tags, sort } = ctx.query
 
     const query = {}
-    if (tags) (query.tags = { $in: tags })
+    if (tags) query.tags = { $in: tags }
 
     const getData = Article.find(query)
       .select('-content')
       .sort(sort || '-created')
       .skip((page - 1) * perPage)
       .limit(Number(perPage))
-      
+
     const getCount = Article.count(query)
     const [list, count] = await Promise.all([getData, getCount])
-    ctx.body = { success: true, data: { list, perPage, page, count }, }
+    ctx.body = { success: true, data: { list, perPage, page, count } }
   },
 
   async read(ctx) {
     const article = await Article.findById(ctx.params.id)
       .populate('author')
       .populate('tags')
-      .populate({ path: 'comments', options: { sort: { 'created': -1 } } })
+      .populate({ path: 'comments', options: { sort: { created: -1 } } })
 
     ctx.body = { success: true, data: article }
   },
@@ -68,15 +66,8 @@ module.exports = {
 
   async comment(ctx) {
     const comment = ctx.request.body
-    comment.type = 1
+
     const leavedMessage = await LeavedMessage.create(comment)
-    const article = await Article.findById({ _id: ctx.params.id })
-    if (article.comments) {
-      article.comments.push(leavedMessage._id)
-    } else {
-      article.comments = [leavedMessage._id]
-    }
-    await article.save()
     ctx.body = { success: true, data: leavedMessage }
   },
 
