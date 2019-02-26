@@ -3,8 +3,7 @@ const mongoose = require('mongoose'),
   verifyCodeModel = mongoose.model('verify-code'),
   userModel = mongoose.model('user'),
   _ = require('lodash'),
-  jwt = require('jsonwebtoken'),
-  axios = require('axios')
+  jwt = require('jsonwebtoken')
 
 // for user
 exports.checkEmailAndSendCode = async ctx => {
@@ -77,34 +76,6 @@ exports.getInfo = ctx => {
   }
 }
 
-// for thirty part
-exports.getGithubToken = async ctx => {
-  const { code } = ctx.query
-  const client_id = '075ff0ff66d5b5f4ace2'
-  const client_secret = 'a17813f3decedb7035b6c61d5395d1f8a164d5c8'
-  const res = await axios.get('https://github.com/login/oauth/access_token', {
-    params: { code, client_id, client_secret }
-  })
-  ctx.body = { success: true, data: res.data }
-}
-
-// for thirty part
-exports.getGithubInfo = async ctx => {
-  const { code } = ctx.query
-  const client_id = '075ff0ff66d5b5f4ace2'
-  const client_secret = 'a17813f3decedb7035b6c61d5395d1f8a164d5c8'
-  const res = await axios.get('https://github.com/login/oauth/access_token', {
-    params: { code, client_id, client_secret }
-  })
-  ctx.body = { success: true, data: res.data }
-}
-
-exports.getGithubInfo = async ctx => {
-  const res = await axios.get('https://api/github.com/user', {
-    params: ctx.query
-  })
-  ctx.body = { success: true, data: res.data }
-}
 // for admin
 exports.list = async ctx => {
   const { perPage = 15, page = 1, ...rest } = ctx.query
