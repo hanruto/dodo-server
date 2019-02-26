@@ -8,5 +8,7 @@ module.exports = router => {
     .post('/users', userController.signUp)
     .get('/users', checkRoles('admin'), userController.list)
     .get('/users/info', checkRoles('user'), userController.getInfo)
+    .get('/users/github-token', userController.getGithubToken)
+    .get('/users/github-info', userController.getGithubInfo)
     .delete('/users/:id', checkRoles('superuser'), userController.remove)
 }
