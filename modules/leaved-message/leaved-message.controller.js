@@ -21,7 +21,7 @@ exports.create = async ctx => {
   comment.user = ctx.state.user._id
   const leavedMessage = await LeavedMessage.create(comment)
 
-  if (leavedMessage.type === 1) {
+  if (leavedMessage.type === 2) {
     const repliedMessage = await LeavedMessage.findOne({ _id: leavedMessage.reply })
       .populate('user', ['email', 'username'])
       .populate('blog', ['_id', 'title'])
@@ -32,7 +32,6 @@ exports.create = async ctx => {
     <h3>嗨，${username}</h3>
     <p>小寒刚刚在博客 <a target="new" href="https://www.dodoblog.cn/blog?id=${blogId}">${title}</a> 中对您的评论进行了回复，快去查看吧。</p>
     `
-
     mailer.send({ to: email, html })
   }
 

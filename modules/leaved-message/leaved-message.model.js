@@ -23,8 +23,8 @@ const LeavedMessageSchema = new Schema(
     },
     type: {
       type: Number,
-      enum: [0, 1, 2, 3, 4], // 0: 普通评论, 1: 管理员回复
-      default: 0
+      enum: [1, 2, 3, 4], // 1: 普通评论, 2: 管理员回复
+      default: 1
     }
   },
   { timestamps: { createdAt: 'created', updatedAt: 'updated' } }
