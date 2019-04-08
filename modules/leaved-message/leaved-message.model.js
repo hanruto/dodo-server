@@ -17,9 +17,13 @@ const LeavedMessageSchema = new Schema(
       type: String,
       required: 'true'
     },
+    reply: {
+      ref: 'leaved-message',
+      type: Schema.ObjectId
+    },
     type: {
       type: Number,
-      enum: [0, 1], // 0 留言板，1 文章
+      enum: [0, 1, 2, 3, 4], // 0: 普通评论, 1: 管理员回复
       default: 0
     }
   },

@@ -66,7 +66,6 @@ module.exports = {
 
   async comment(ctx) {
     const comment = ctx.request.body
-
     const leavedMessage = await LeavedMessage.create(comment)
     ctx.body = { success: true, data: leavedMessage }
   },
