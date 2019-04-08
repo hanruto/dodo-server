@@ -7,9 +7,6 @@ exports.checkRoles = roles => {
     }
 
     // 超级管理员没有权限限制
-    if (ctx.state.user && ctx.state.user.role === 'superuser') {
-      return next()
-    }
 
     if (roles.includes('user')) {
       return passport.authenticate('jwt', { session: false })(ctx, next)
@@ -21,6 +18,9 @@ exports.checkRoles = roles => {
       }
 
       const accountRole = ctx.state.user.role
+
+      if (accountRole === 'superuser') return next()
+
       const checkResult = roles.includes(accountRole)
 
       if (checkResult) {

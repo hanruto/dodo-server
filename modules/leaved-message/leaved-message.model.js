@@ -5,8 +5,7 @@ const LeavedMessageSchema = new Schema(
   {
     user: {
       type: Schema.ObjectId,
-      ref: 'user',
-      required: true
+      ref: 'user'
     },
     blog: {
       type: Schema.ObjectId,
