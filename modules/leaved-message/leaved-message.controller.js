@@ -1,5 +1,6 @@
 const mongoose = require('mongoose'),
-  LeavedMessage = mongoose.model('leaved-message')
+  LeavedMessage = mongoose.model('leaved-message'),
+  mailer = require('../email/mailer.controller')
 
 exports.list = async ctx => {
   const { perPage = 15, page = 1, ...rest } = ctx.query
@@ -17,9 +18,24 @@ exports.list = async ctx => {
 
 exports.create = async ctx => {
   const comment = Object.assign(ctx.request.body)
-  comment.type = 1 // 博客留言
   comment.user = ctx.state.user._id
   const leavedMessage = await LeavedMessage.create(comment)
+
+  if (leavedMessage.type === 1) {
+    const repliedMessage = await LeavedMessage.findOne({ _id: leavedMessage.reply })
+      .populate('user', ['email', 'username'])
+      .populate('blog', ['_id', 'title'])
+
+    const { email, username } = repliedMessage.user
+    const { _id: blogId, title } = repliedMessage.blog
+    const html = `
+    <h3>嗨，${username}</h3>
+    <p>小寒刚刚在博客 <a target="new" href="https://www.dodoblog.cn/blog?id=${blogId}">${title}</a> 中对您的评论进行了回复，快去查看吧。</p>
+    `
+
+    mailer.send({ to: email, html })
+  }
+
   ctx.body = { success: true, data: leavedMessage, message: '保存成功' }
 }
 
