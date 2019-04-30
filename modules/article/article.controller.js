@@ -38,7 +38,7 @@ module.exports = {
 
   async read(ctx) {
     const article = await Article.findById(ctx.params.id)
-      .populate('author')
+      .populate('author', ['nickname', 'email', 'username'])
       .populate('tags')
       .populate({ path: 'comments', options: { sort: { created: -1 } } })
 
