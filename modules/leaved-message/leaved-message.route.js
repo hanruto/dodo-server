@@ -6,4 +6,5 @@ module.exports = router => {
     .get('/leaved-messages', leavedMessage.list)
     .post('/leaved-messages', checkRoles('user'), leavedMessage.create)
     .delete('/leaved-messages/:id', checkRoles('admin'), leavedMessage.delete)
+    .post('/leaved-messages/reply', checkRoles('admin'), leavedMessage.reply)
 }

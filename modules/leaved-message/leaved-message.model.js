@@ -5,8 +5,7 @@ const LeavedMessageSchema = new Schema(
   {
     user: {
       type: Schema.ObjectId,
-      ref: 'user',
-      required: true
+      ref: 'user'
     },
     blog: {
       type: Schema.ObjectId,
@@ -17,10 +16,14 @@ const LeavedMessageSchema = new Schema(
       type: String,
       required: 'true'
     },
+    reply: {
+      ref: 'leaved-message',
+      type: Schema.ObjectId
+    },
     type: {
       type: Number,
-      enum: [0, 1], // 0 留言板，1 文章
-      default: 0
+      enum: [1, 2, 3, 4], // 1: 普通评论, 2: 管理员回复
+      default: 1
     }
   },
   { timestamps: { createdAt: 'created', updatedAt: 'updated' } }
