@@ -8,7 +8,7 @@
     "start": "node index"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "0.18.1",
     "bcrypt": "^3.0.4",
     "dayjs": "^1.8.14",
     "glob": "^7.1.2",
@@ -21,7 +21,7 @@
     "koa-session": "^5.8.2",
     "koa-static": "^5.0.0",
     "koa2-cors": "^2.0.6",
-    "lodash": "^4.17.10",
+    "lodash": "4.17.13",
     "mongoose": "^5.2.9",
     "nodemailer": "^5.1.1",
     "passport": "^0.4.0",
