@@ -66,7 +66,7 @@ module.exports = {
 
     analysis.forEach(item => {
       const day = dayjs(item.created).format('YYYY-MM-DD')
-      if (result[day] !== undefined) result[day].push(item)
+      if (result[day] !== undefined) result[day].push(item.ip)
     })
 
     const data = Object.keys(result).map(date => ({
