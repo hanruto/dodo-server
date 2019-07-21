@@ -21,20 +21,29 @@ module.exports = {
   async list(ctx) {
     const { offset = 0, limit = 20 } = ctx.query
 
-    const getCount = Record.count()
+    const getPvCount = Record.count()
 
     const today = new Date()
     const todayStartTime = new Date(today.getFullYear(), today.getMonth(), today.getDate())
-    const getDayCount = Record.count({ created: { $gt: todayStartTime } })
+
+    const getPvDayCount = Record.count({ created: { $gt: todayStartTime } })
+    const getUvIpArr = Record.distinct('ip')
+    const getDayUvIpArr = Record.find({ created: { $gt: todayStartTime } }).distinct('ip')
 
     const getList = Record.find()
       .sort('-created')
       .skip(Number(offset))
       .limit(Number(limit))
 
-    const [count, dayCount, list] = await Promise.all([getCount, getDayCount, getList])
+    const [
+      pvCount,
+      dayPvCount,
+      { length: uvCount },
+      { length: dayUvCount },
+      list
+    ] = await Promise.all([getPvCount, getPvDayCount, getUvIpArr, getDayUvIpArr, getList])
 
-    ctx.body = { success: true, data: { list, count, offset, limit, dayCount } }
+    ctx.body = { success: true, data: { list, pvCount, offset, limit, dayPvCount, uvCount, dayUvCount } }
   },
 
   async analyze(ctx) {
@@ -64,7 +73,6 @@ module.exports = {
       viewCount: result[date]
     }))
 
-    console.log(data)
     ctx.body = { success: true, data }
   }
 }

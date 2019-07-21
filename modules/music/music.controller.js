@@ -10,8 +10,6 @@ const NetEaseRequest = async ctx => {
   const url = originUrl.replace('/api/musics', basicUrl)
   const res = await axios.get(url, { params: query })
 
-  console.log(res.data)
-
   if (res.data) {
     if (typeof res.data === 'string') {
       ctx.body = { data: res.data, success: true }
