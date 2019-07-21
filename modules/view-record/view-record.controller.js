@@ -1,6 +1,7 @@
 const mongoose = require('mongoose'),
   Record = mongoose.model('view-record'),
-  dayjs = require('dayjs')
+  dayjs = require('dayjs'),
+  _ = require('lodash')
 
 module.exports = {
   async create(ctx) {
@@ -56,21 +57,22 @@ module.exports = {
 
     while (current < end) {
       const label = dayjs(current).format('YYYY-MM-DD')
-      result[label] = 0
+      result[label] = []
       current = current + 24 * 3600 * 1000
     }
 
     const endLabel = dayjs(end).format('YYYY-MM-DD')
-    result[endLabel] = 0
+    result[endLabel] = []
 
     analysis.forEach(item => {
       const day = dayjs(item.created).format('YYYY-MM-DD')
-      if (result[day] !== undefined) result[day]++
+      if (result[day] !== undefined) result[day].push(item)
     })
 
     const data = Object.keys(result).map(date => ({
       date,
-      viewCount: result[date]
+      pv: result[date].length,
+      uv: _.union(result[date]).length,
     }))
 
     ctx.body = { success: true, data }
