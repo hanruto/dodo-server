@@ -23,7 +23,6 @@ function sendMailToMe() {
 
 module.exports = {
   catchYCH5SentryError: async ctx => {
-    console.log(ctx.request.body)
     const { url, dateCreated: happendAt, events } = ctx.request.body
     const errorInfo = { url, happendAt, events }
     const error = await errorStatisticModel.create(errorInfo)
@@ -33,11 +32,10 @@ module.exports = {
     const isNeedSend = Date.now() - lastSendTime >= config.sendInterval
 
     console.log(count, lastSendTime, isNeedWarning, isNeedSend)
+
     if (isNeedWarning && isNeedSend) {
       sendMailToMe()
     }
-
-    ctx.status = 400
 
     ctx.body = {
       success: true,
