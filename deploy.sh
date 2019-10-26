@@ -9,7 +9,7 @@ echo "---------- start install devpendence ! ----------"
 yarn install
 
 echo "---------- start build ! ----------"
-pm2 restart common-server
+pm2 restart server
 
 
 if [ $? -ne 0 ]; then
