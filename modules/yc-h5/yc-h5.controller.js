@@ -43,6 +43,6 @@ module.exports = {
       sendMailToMe()
     }
 
-    ctx.body = { success: true, data: error, message: '发送成功' }
+    ctx.body = { success: true, data: { ...error, count, lastSendTime }, message: '发送成功' }
   }
 }
