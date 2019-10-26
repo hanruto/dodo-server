@@ -52,7 +52,7 @@ module.exports = {
 
     ctx.body = {
       success: true,
-      data: { count },
+      data: count,
       message: '查询成功'
     }
   },
@@ -60,11 +60,11 @@ module.exports = {
   getSentryError: async ctx => {
     const isAll = ctx.request.query.all
     const query = { created: { $gte: Date.now() - config.statisticInterval } }
-    const count = await sentryErrorModel.find(isAll ? {} : query)
+    const errors = await sentryErrorModel.find(isAll ? {} : query)
 
     ctx.body = {
       success: true,
-      data: { count },
+      data: errors,
       message: '查询成功'
     }
   }
