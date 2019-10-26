@@ -1,4 +1,3 @@
-// 每小时超过20条会报错，30分钟发一次
 module.exports = {
   warningLine: 20,
   sendInterval: 30 * 60 * 1000,

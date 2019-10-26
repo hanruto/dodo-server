@@ -11,4 +11,4 @@ const ErrorStatisticSchema = new Schema(
   { timestamps: { createdAt: 'created', updatedAt: 'updated' } }
 )
 
-module.exports = mongoose.model('error-statistic', ErrorStatisticSchema)
+module.exports = mongoose.model('sentry-error', ErrorStatisticSchema)
