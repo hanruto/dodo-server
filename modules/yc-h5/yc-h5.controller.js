@@ -2,7 +2,8 @@ const mailer = require('../email/mailer.controller'),
   dayjs = require('dayjs'),
   mongoose = require('mongoose'),
   sentryErrorModel = mongoose.model('sentry-error'),
-  config = require('./yc-h5.config')
+  config = require('./yc-h5.config'),
+  _ = require('lodash')
 
 let lastSendTime = null
 
@@ -61,7 +62,7 @@ module.exports = {
   getSentryError: async ctx => {
     const isAll = ctx.request.query.all
     const query = { created: { $gte: Date.now() - config.statisticInterval } }
-    const errors = await sentryErrorModel.find(isAll ? {} : query)
+    const errors = await sentryErrorModel.find(isAll ? {} : query).select('-errorDetail')
 
     ctx.body = {
       success: true,
