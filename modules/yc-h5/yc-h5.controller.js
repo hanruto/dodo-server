@@ -1,7 +1,7 @@
 const mailer = require('../email/mailer.controller'),
   dayjs = require('dayjs'),
   mongoose = require('mongoose'),
-  errorStatisticModel = mongoose.model('sentry-error'),
+  sentryErrorModel = mongoose.model('sentry-error'),
   config = require('./yc-h5.config')
 
 let lastSendTime = null
@@ -25,9 +25,9 @@ module.exports = {
   catchYCH5SentryError: async ctx => {
     const { url, dateCreated: happendAt, events } = ctx.request.body
     const errorInfo = { url, happendAt, events }
-    const error = await errorStatisticModel.create(errorInfo)
+    const error = await sentryErrorModel.create(errorInfo)
     const query = { created: { $gte: Date.now() - config.statisticInterval } }
-    const count = await errorStatisticModel.count(query)
+    const count = await sentryErrorModel.count(query)
     const isNeedWarning = count >= config.warningLine
     const isNeedSend = Date.now() - lastSendTime >= config.sendInterval
 
@@ -41,6 +41,18 @@ module.exports = {
       success: true,
       data: { ...error, count, lastSendTime },
       message: isNeedWarning && isNeedSend ? '错误保存并且邮件发送成功' : '错误保存成功'
+    }
+  },
+
+  countSentryError: async ctx => {
+    const isAll = ctx.request.query.all
+    const query = { created: { $gte: Date.now() - config.statisticInterval } }
+    const count = await sentryErrorModel.count(isAll ? {} : query)
+
+    ctx.body = {
+      success: true,
+      data: { count },
+      message: '查询成功'
     }
   }
 }
