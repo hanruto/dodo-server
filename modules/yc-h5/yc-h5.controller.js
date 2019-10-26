@@ -23,10 +23,10 @@ function sendMailToMe() {
 
 module.exports = {
   catchYCH5SentryError: async ctx => {
-    const { url, dateCreated: happendAt, events } = ctx.request.body
+    const { url, id: eventId, project, message } = ctx.request.body
     console.log(ctx.request.body)
-    const errorDetail = ctx.request.body
-    const errorInfo = { url, happendAt, events, errorDetail }
+    const errorDetail = JSON.stringify(ctx.request.body)
+    const errorInfo = { url, message, errorDetail, project, eventId }
     const error = await sentryErrorModel.create(errorInfo)
     const query = { created: { $gte: Date.now() - config.statisticInterval } }
     const count = await sentryErrorModel.count(query)

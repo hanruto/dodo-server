@@ -3,11 +3,12 @@ const mongoose = require('mongoose'),
 
 const ErrorStatisticSchema = new Schema(
   {
-    projectName: { type: String },
+    eventId: { type: Number },
+    project: { type: String },
     url: { type: String },
-    happendAt: { type: Date },
     events: { type: Array },
-    errorDetail: { type: Object }
+    errorDetail: { type: String },
+    message: { type: String }
   },
   { timestamps: { createdAt: 'created', updatedAt: 'updated' } }
 )
