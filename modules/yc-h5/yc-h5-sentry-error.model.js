@@ -6,7 +6,8 @@ const ErrorStatisticSchema = new Schema(
     projectName: { type: String },
     url: { type: String },
     happendAt: { type: Date },
-    events: { type: Array }
+    events: { type: Array },
+    errorDetail: { type: Object }
   },
   { timestamps: { createdAt: 'created', updatedAt: 'updated' } }
 )

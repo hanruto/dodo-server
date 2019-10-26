@@ -24,7 +24,8 @@ function sendMailToMe() {
 module.exports = {
   catchYCH5SentryError: async ctx => {
     const { url, dateCreated: happendAt, events } = ctx.request.body
-    const errorInfo = { url, happendAt, events }
+    const errorDetail = ctx.request.body
+    const errorInfo = { url, happendAt, events, errorDetail }
     const error = await sentryErrorModel.create(errorInfo)
     const query = { created: { $gte: Date.now() - config.statisticInterval } }
     const count = await sentryErrorModel.count(query)
@@ -48,6 +49,18 @@ module.exports = {
     const isAll = ctx.request.query.all
     const query = { created: { $gte: Date.now() - config.statisticInterval } }
     const count = await sentryErrorModel.count(isAll ? {} : query)
+
+    ctx.body = {
+      success: true,
+      data: { count },
+      message: '查询成功'
+    }
+  },
+
+  getSentryError: async ctx => {
+    const isAll = ctx.request.query.all
+    const query = { created: { $gte: Date.now() - config.statisticInterval } }
+    const count = await sentryErrorModel.find(isAll ? {} : query)
 
     ctx.body = {
       success: true,
