@@ -11,7 +11,7 @@ function sendMailToMe() {
     <h3>严重警告</h3><br/>
     <div><label><b>from: </b></label> sentry</div>
     <div><label><b>time: </b></label> ${dayjs(Date.now()).format('YYYY-mm-DD HH:MM:ss')}</div>
-    <div><label><b>content: </b></label> 您的网站 primary_school_mobile_h5 在短时间内发生了过多的错误，请及时检查处理</div>
+    <div><label><b>content: </b></label> 您的网站在短时间内发生了过多的错误，请及时处理</div>
   `
   const data = { to: '1256790127@qq.com', html }
 
