@@ -24,6 +24,7 @@ function sendMailToMe() {
 module.exports = {
   catchYCH5SentryError: async ctx => {
     const { url, dateCreated: happendAt, events } = ctx.request.body
+    console.log(ctx.request.body)
     const errorDetail = ctx.request.body
     const errorInfo = { url, happendAt, events, errorDetail }
     const error = await sentryErrorModel.create(errorInfo)
