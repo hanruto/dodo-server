@@ -38,11 +38,14 @@ module.exports = {
     const isNeedSend = Date.now() - lastSendTime >= config.sendInterval
 
     console.log(count, lastSendTime, isNeedWarning, isNeedSend)
-
     if (isNeedWarning && isNeedSend) {
       sendMailToMe()
     }
 
-    ctx.body = { success: true, data: { ...error, count, lastSendTime }, message: '发送成功' }
+    ctx.body = {
+      success: true,
+      data: { ...error, count, lastSendTime },
+      message: isNeedWarning && isNeedSend ? '错误保存并且邮件发送成功' : '错误保存成功'
+    }
   }
 }
