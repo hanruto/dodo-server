@@ -2,8 +2,7 @@ const mailer = require('../email/mailer.controller'),
   dayjs = require('dayjs'),
   mongoose = require('mongoose'),
   sentryErrorModel = mongoose.model('sentry-error'),
-  config = require('./yc-h5.config'),
-  _ = require('lodash')
+  config = require('./yc-h5.config')
 
 let lastSendTime = null
 
