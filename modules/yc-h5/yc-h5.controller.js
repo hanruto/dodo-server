@@ -25,11 +25,6 @@ module.exports = {
   catchYCH5SentryError: async ctx => {
     console.log(ctx.request.body)
     const { url, dateCreated: happendAt, events } = ctx.request.body
-
-    if (config.whiteList.includes(url)) {
-      ctx.body = { success: true, message: '错误url处于白名单中' }
-    }
-
     const errorInfo = { url, happendAt, events }
     const error = await errorStatisticModel.create(errorInfo)
     const query = { created: { $gte: Date.now() - config.statisticInterval } }
@@ -41,6 +36,8 @@ module.exports = {
     if (isNeedWarning && isNeedSend) {
       sendMailToMe()
     }
+
+    ctx.status = 400
 
     ctx.body = {
       success: true,
