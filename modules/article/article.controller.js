@@ -20,10 +20,11 @@ const getTagIds = async tags => {
 
 module.exports = {
   async list(ctx) {
-    const { perPage = 15, page = 1, tags, sort } = ctx.query
+    const { perPage = 15, page = 1, tags, sort, type } = ctx.query
 
     const query = {}
     if (tags) query.tags = { $in: tags }
+    if (type) query.type = type
 
     const getData = Article.find(query)
       .select('-content')

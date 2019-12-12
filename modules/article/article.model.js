@@ -23,7 +23,7 @@ const ArticleSchema = new Schema({
   },
   type: {
     type: Number,
-    enum: [1, 2, 3],  // 1. tech 2. life 3. original
+    enum: [1, 2, 3],  // 1. 公开博客 2. 私密博客 3. 其他
     default: 1
   },
   public: {
