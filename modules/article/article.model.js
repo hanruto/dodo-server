@@ -38,13 +38,6 @@ const ArticleSchema = new Schema({
     type: Number,
     default: 0
   },
-  comments: {
-    default: [],
-    type: [{
-      ref: 'leaved-message',
-      type: Schema.ObjectId,
-    }]
-  }
 }, { timestamps: { createdAt: 'created', updatedAt: 'updated' }, })
 
 module.exports = mongoose.model('article', ArticleSchema)

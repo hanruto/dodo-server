@@ -41,7 +41,6 @@ module.exports = {
     const article = await Article.findById(ctx.params.id)
       .populate('author', ['nickname', 'email', 'username'])
       .populate('tags')
-      .populate({ path: 'comments', options: { sort: { created: -1 } } })
 
     ctx.body = { success: true, data: article }
   },
@@ -71,19 +70,14 @@ module.exports = {
     ctx.body = { success: true, data: leavedMessage }
   },
 
-  async deleteComment(ctx) {
-    const { id, commentId } = ctx.params
-    const article = await Article.findById({ _id: id })
-    article.comments = article.comments.filter(comment => comment._id.toString() !== commentId)
-
-    const updatedArticle = await article.save()
-
-    ctx.body = { success: true, data: updatedArticle }
-  },
-
   async getTags(ctx) {
     const tags = await ArticleTag.find()
     ctx.body = { success: true, data: tags }
+  },
+
+  async getComments(ctx) {
+    const { id } = ctx.params
+    console.log(id)
   },
 
   async deleteTag(ctx) {
@@ -91,13 +85,4 @@ module.exports = {
     await ArticleTag.remove({ _id: tagId })
     ctx.body = { success: true }
   },
-
-  async addViewCount(ctx) {
-    const { id } = ctx.params
-    const article = await Article.findById(id)
-
-    article.viewCount++
-    await article.save()
-    ctx.body = { success: true, data: article }
-  }
 }

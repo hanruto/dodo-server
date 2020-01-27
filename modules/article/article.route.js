@@ -48,14 +48,6 @@ module.exports = router => {
     // 标签
     .get('/articles/tags', article.getTags)
     .delete('/articles/tags/:tagId', checkRoles('admin'), article.deleteTag)
-
-    // 评论
-    .put('/articles/:id/comment', article.comment)
-    .delete('/articles/:id/comment/:commentId', checkRoles('admin'), article.deleteComment)
-
-    // 阅读
-    .put('/articles/:id/view-count', article.addViewCount)
-
     // 文章管理
     .get('/articles', article.list)
     .get('/articles/:id', article.read)
