@@ -1,7 +1,6 @@
 const mongoose = require('mongoose'),
   Article = mongoose.model('article'),
-  ArticleTag = mongoose.model('article-tag'),
-  LeavedMessage = mongoose.model('leaved-message')
+  ArticleTag = mongoose.model('article-tag')
 
 const getTagIds = async tags => {
   if (!tags) return null
@@ -64,20 +63,9 @@ module.exports = {
     ctx.body = { success: true }
   },
 
-  async comment(ctx) {
-    const comment = ctx.request.body
-    const leavedMessage = await LeavedMessage.create(comment)
-    ctx.body = { success: true, data: leavedMessage }
-  },
-
   async getTags(ctx) {
     const tags = await ArticleTag.find()
     ctx.body = { success: true, data: tags }
-  },
-
-  async getComments(ctx) {
-    const { id } = ctx.params
-    console.log(id)
   },
 
   async deleteTag(ctx) {

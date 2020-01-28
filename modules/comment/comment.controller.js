@@ -11,9 +11,24 @@ module.exports = {
   },
 
   async getComments(ctx) {
-    const query = ctx.query
-    const comments = await Comment.find(query).sort('-created')
+    const { page, perPage, ...query } = ctx.query
+    const skip = (page - 1) * perPage
+    const limit = Number(perPage)
+    const comments = await Comment
+      .find(query)
+      .limit(limit)
+      .skip(skip)
+      .sort('-created')
+      .populate('blogId')
+    const total = await Comment.count(query)
 
-    ctx.body = { success: true, data: comments }
+    ctx.body = { success: true, data: { list: comments, total } }
+  },
+
+  async deleteComments(ctx) {
+    const id = ctx.params.id
+    await Comment.findByIdAndRemove(id)
+
+    ctx.body = { success: true }
   },
 }

@@ -1,23 +1,22 @@
 const mongoose = require('mongoose'),
   Schema = mongoose.Schema
 
-const CommentSchema = new Schema({
-  blogId: {
+const TrackSchema = new Schema({
+  key: {
     type: String,
-    ref: 'article'
+    required: true,
   },
   type: {
-    type: Number,
+    type: String,
+  },
+  info: {
+    type: Object,
     default: 1,  // 1: 博客 2: 留言
   },
-  content: {
+  ip: {
     type: String,
     required: true,
   },
-  nickname: {
-    type: String,
-    required: true,
-  }
 }, { timestamps: { createdAt: 'created', updatedAt: 'updated' }, })
 
-module.exports = mongoose.model('comment', CommentSchema)
+module.exports = mongoose.model('track', TrackSchema)
