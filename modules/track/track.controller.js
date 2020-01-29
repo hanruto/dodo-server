@@ -5,7 +5,7 @@ const mongoose = require('mongoose'),
 
 module.exports = {
   async create(ctx) {
-    const ip = ctx.headers['x-forwarded-for']
+    const ip = ctx.request.headers['x-forward-for']
       || ctx.headers['x-real-ip']
       || ctx.socket.remoteAddress
     const info = { ...ctx.request.body, ip }
