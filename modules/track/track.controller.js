@@ -1,7 +1,18 @@
 const mongoose = require('mongoose'),
   trackModel = mongoose.model('track'),
   dayjs = require('dayjs'),
-  _ = require('lodash')
+  _ = require('lodash'),
+  whitelistController = require('../whitelist/whitelist.controller')
+
+function findExcludeWhiteList(query) {
+  const ipWhitelist = whitelistController.get('ip')
+  return trackModel.find({ ...query, ip: { $nin: [...ipWhitelist, null] } })
+}
+
+function countExcludeWhiteList(query) {
+  const ipWhitelist = whitelistController.get('ip')
+  return trackModel.count({ ...query, ip: { $nin: [...ipWhitelist, null] } })
+}
 
 module.exports = {
   async create(ctx) {
@@ -10,21 +21,26 @@ module.exports = {
       || ctx.socket.remoteAddress
     const info = { ...ctx.request.body, ip }
     const track = new trackModel(info)
-    const data = await track.save()
+    const ipWhitelist = whitelistController.get('ip')
 
+    if (ipWhitelist.includes(ip)) {
+      return ctx.body = { success: true, message: 'ip is in the whitelist' }
+    }
+
+    const data = await track.save()
     ctx.body = { success: true, data }
   },
 
   async list(ctx) {
+    const ipWhitelist = whitelistController.get('ip')
     const { limit = 100, skip = 0, ...query } = ctx.query
-    const tracks = await trackModel
-      .find(query)
+    query.ip = { $nin: ipWhitelist }
+    const tracks = await findExcludeWhiteList(query)
       .skip(Number(skip))
       .limit(Number(limit))
       .sort('-created')
 
-    const total = await trackModel
-      .count(query)
+    const total = await countExcludeWhiteList(query)
 
     ctx.body = { success: true, data: { list: tracks, total } }
   },
@@ -32,10 +48,10 @@ module.exports = {
   async analyzePvAndUv(ctx) {
     const today = new Date()
     const todayStartTime = new Date(today.getFullYear(), today.getMonth(), today.getDate())
-    const getPvDayCount = trackModel.count({ type: 'route-change', created: { $gt: todayStartTime } })
-    const getPvCount = trackModel.count({ type: 'route-change' })
-    const getUvIp = trackModel.find({ type: 'route-change' }).distinct('ip')
-    const getUvDayIp = trackModel.find({ type: 'route-change', created: { $gt: todayStartTime } }).distinct('ip')
+    const getPvDayCount = countExcludeWhiteList({ type: 'route-change', created: { $gt: todayStartTime } })
+    const getPvCount = countExcludeWhiteList({ type: 'route-change' })
+    const getUvIp = findExcludeWhiteList({ type: 'route-change' }).distinct('ip')
+    const getUvDayIp = findExcludeWhiteList({ type: 'route-change', created: { $gt: todayStartTime } }).distinct('ip')
     const [pvCount, pvDayCount, { length: uvCount }, { length: uvDayCount }] = await Promise.all([getPvCount, getPvDayCount, getUvIp, getUvDayIp])
 
     ctx.body = { success: true, data: { pvCount, pvDayCount, uvCount, uvDayCount } }
@@ -45,7 +61,7 @@ module.exports = {
     const duration = ctx.query.duration || 7
     const end = (ctx.query.end || Date.now()).valueOf()
     const start = (ctx.query.start || end - duration * 24 * 3600 * 1000).valueOf()
-    const analysis = await trackModel.find({ type: 'route-change' })
+    const analysis = await findExcludeWhiteList({ type: 'route-change' })
 
     let result = {}
     let current = start
