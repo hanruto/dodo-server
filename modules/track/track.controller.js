@@ -10,9 +10,9 @@ module.exports = {
       || ctx.socket.remoteAddress
     const info = { ...ctx.request.body, ip }
     const track = new trackModel(info)
-    await track.save()
+    const data = await track.save()
 
-    ctx.body = { success: true }
+    ctx.body = { success: true, data }
   },
 
   async list(ctx) {
