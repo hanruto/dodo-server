@@ -52,5 +52,5 @@ module.exports = router => {
     .post('/articles', checkRoles('admin'), article.create)
     .put('/articles/:id', checkRoles('admin'), article.update)
     .delete('/articles/:id', checkRoles('admin'), article.delete)
-    .patch('/articles/:id/view-count', article.addViewCount)
+    .post('/articles/:id/view-count', article.addViewCount)
 }
