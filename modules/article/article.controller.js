@@ -1,6 +1,7 @@
 const mongoose = require('mongoose'),
   Article = mongoose.model('article'),
-  ArticleTag = mongoose.model('article-tag')
+  ArticleTag = mongoose.model('article-tag'),
+  whitelistController = require('../whitelist/whitelist.controller')
 
 const getTagIds = async tags => {
   if (!tags) return null
@@ -76,6 +77,14 @@ module.exports = {
 
   async addViewCount(ctx) {
     const { id } = ctx.params
+    const ip = ctx.request.headers['x-forward-for']
+      || ctx.headers['x-real-ip']
+      || ctx.socket.remoteAddress
+
+    if (whitelistController.get('ip').includes(ip)) {
+      return ctx.body = { success: true, message: 'ip在白名单中，不予统计' }
+    }
+
     const article = await Article.findById(id)
 
     article.viewCount++
