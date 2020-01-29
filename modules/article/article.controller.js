@@ -73,4 +73,13 @@ module.exports = {
     await ArticleTag.remove({ _id: tagId })
     ctx.body = { success: true }
   },
+
+  async addViewCount(ctx) {
+    const { id } = ctx.params
+    const article = await Article.findById(id)
+
+    article.viewCount++
+    await article.save()
+    ctx.body = { success: true, data: article }
+  }
 }

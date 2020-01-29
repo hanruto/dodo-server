@@ -45,13 +45,12 @@ const article = require('./article.controller'),
  */
 module.exports = router => {
   router
-    // 标签
     .get('/articles/tags', article.getTags)
     .delete('/articles/tags/:tagId', checkRoles('admin'), article.deleteTag)
-    // 文章管理
     .get('/articles', article.list)
     .get('/articles/:id', article.read)
     .post('/articles', checkRoles('admin'), article.create)
     .put('/articles/:id', checkRoles('admin'), article.update)
     .delete('/articles/:id', checkRoles('admin'), article.delete)
+    .patch('/articles/:id/view-count', article.addViewCount)
 }
