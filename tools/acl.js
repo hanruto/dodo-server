@@ -1,4 +1,5 @@
 const passport = require('koa-passport')
+const whitelistController = require('../modules/whitelist/whitelist.controller')
 
 exports.checkRoles = roles => {
   return async function(ctx, next) {
@@ -30,4 +31,16 @@ exports.checkRoles = roles => {
       }
     }
   }
+}
+
+exports.checkIpIsInWhiteList = (ctx, next) => {
+  const ip = ctx.request.headers['x-forward-for']
+    || ctx.headers['x-real-ip']
+    || ctx.socket.remoteAddress
+
+  if (whitelistController.get('ip').includes(ip)) {
+    return ctx.body = { success: true, message: 'ip在白名单中，不予统计' }
+  }
+
+  return next()
 }

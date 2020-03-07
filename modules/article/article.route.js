@@ -1,5 +1,5 @@
-const article = require('./article.controller'),
-  { checkRoles } = require('../../tools/acl')
+const article = require('./article.controller')
+const { checkIpIsInWhiteList, checkRoles } = require('../../tools/acl')
 
 /**
  * getTags
@@ -52,5 +52,5 @@ module.exports = router => {
     .post('/articles', checkRoles('admin'), article.create)
     .put('/articles/:id', checkRoles('admin'), article.update)
     .delete('/articles/:id', checkRoles('admin'), article.delete)
-    .post('/articles/:id/view-count', article.addViewCount)
+    .post('/articles/:id/view-count', checkIpIsInWhiteList, article.addViewCount)
 }
