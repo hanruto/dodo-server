@@ -27,7 +27,7 @@
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "qs": "^6.5.2",
+    "qs": "^6.5.3",
     "random-string": "^0.2.0"
   },
   "devDependencies": {
